@@ -11,6 +11,7 @@ services:
     container_name: "order-service"
     ports:
       - 8081:9002
+      - 8002:8001
     healthcheck: # Ensure order Service is running before other services start
       test: [ "CMD", "/workspace/health-check" ]
       interval: 5s
@@ -23,6 +24,9 @@ services:
       - BPL_JVM_THREAD_COUNT=50
       - DB_HOSTNAME=polar-postgres
       - CONFIG_HOSTNAME=config-service
+      - CATALOG_SERVICE_HOSTNAME=catalog-service
+      - CATALOG_SERVICE_PORT=9001
+      - BPL_DEBUG_PORT=8001
   catalog-service:
     depends_on:
       config-service:
