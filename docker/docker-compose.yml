@@ -51,6 +51,26 @@ services:
       - BPL_JVM_THREAD_COUNT=50
       - DB_HOSTNAME=polar-postgres
       - CONFIG_HOSTNAME=config-service
+  authserver:
+    depends_on:
+      polar-postgres:
+        condition: service_started
+    image: ${REGISTRY}/authserver
+    container_name: "authserver"
+    ports:
+      - 8003:9003
+    healthcheck: # Ensure authserver is running before other services start
+      test: [ "CMD", "/workspace/health-check" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    environment:
+      - THC_PATH=/actuator/health
+      - THC_PORT=9003
+      - BPL_DEBUG_ENABLED=true
+      - BPL_DEBUG_PORT=8004
+      - BPL_JVM_THREAD_COUNT=50
+      - CONFIG_HOSTNAME=config-service
 
   polar-postgres:
     image: "postgres:14.4"
